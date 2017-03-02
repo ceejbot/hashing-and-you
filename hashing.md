@@ -7,6 +7,14 @@
 
 ---
 
+# [fit] this deep-dive is on
+# [fit] __hash functions__
+# [fit] not cryptography in general
+
+^ Going to dive into hashing today. Topic came up because...
+
+---
+
 ## [fit] Google figured out how to
 ## [fit] generate two PDF files with
 ## [fit] __the same SHA-1 hash__
@@ -14,16 +22,28 @@
 ---
 
 ## [fit] why does this matter?
+## [fit] what should npm do about it?
 
 ---
 
-# [fit] __hashes__ rule everything around me
-
-^ And around you.
+## [fit] the term __hash__
+## [fit] like so many computer terms,
+## [fit] is __metaphorical__
 
 ---
 
-## What's a hash function?
+# [fit] hash functions chop up data
+# [fit] and __hash it up__
+# [fit] ha ha get it?
+# [fit] \(except we're not sure of the origin)
+
+---
+
+# [fit] what's a __hash function__?
+
+---
+
+## __hash function__
 
 > Any function that can be used to map data of arbitrary size to data of fixed size.
 
@@ -39,17 +59,45 @@
 
 ---
 
-## [fit] data ➜ function ➜ number
-## [fit] message ➜ hash ➜ digest/hash/code
+## [fit] data ➜ fn ➜ number
+## [fit] message ➜ __hash__ ➜ digest/hash/code
 
 ^ Say hello to some jargon.
 
 ---
 
-## [fit] the hash value is (usually)
-## [fit] a lot smaller than the data!
+## really simple hash function, from Knuth
 
-^ This is very handy.
+If *k* is an integer key, and *n* is the number of buckets, not a power of 2:
+
+`f(k) = k(k+3) mod n`
+
+```
+const buckets = 19;
+function knuth(k) {
+	return (k * (k + 3)) % buckets;
+}
+```
+
+---
+
+## mostly we hash character data...
+
+So we do this, roughly:
+
+- initialize to 0
+- take the input in chunks of the size that you want
+- do something to the chunk & XOR it into the result
+- when out of chunks, return
+
+The "something" can either be very simple, like the Knuth division hash, or very complex.
+
+---
+
+## [fit] the hash value is (usually)
+## [fit] a lot __smaller__ than the data!
+
+^ This is very handy: you have a representation of the data, related to it, that isn't a full copy of it.
 
 ---
 
@@ -70,28 +118,41 @@ Alice publishes a package on npm. Bob wants to know if the package he's download
 Alice creates a *checksum* of the data:
 
 ```
-> md5 <  package.tgz`
+⇒ md5 <  package.tgz
 0030be42121988078dca0ec982d04f72
 ```
 
-She gives the output to Bob, and he can run it on his download to see if he has the data she meant to give him.
+She gives the output to Bob, and he can compare with the md5 sum of his download to see if he has the data she meant to give him.
 
 ---
+
+## features of a good hash function
 
 - output is *deterministic*
 - output is *uniformly distributed*, not clustered
 - usually: fast
-- often: output value has a fixed size
+- output value has a fixed size
 - sometimes: similar inputs produce nearby outputs
 - sometimes: similar inputs produce distant outputs (avalanche effect)
-
-^ Features of a good hash function
 
 ---
 
 ## [fit] __avalanche effect__
 ## [fit] a small change in input
 ## [fit] large change in output
+
+---
+
+# hashing __cat__ and __car__ with MD5
+
+```
+⇒ echo cat | md5
+54b8617eca0e54c7d3c8e6732c6b687a
+⇒ echo car | md5
+5cd3e81fb747479797b62794c6bf6aaf
+```
+
+Even the battered md5 has the avalanche effect.
 
 ---
 
@@ -111,7 +172,8 @@ She gives the output to Bob, and he can run it on his download to see if he has 
 
 ---
 
-## [fit] often we want __cryptographic__ hashes
+## [fit] often we want
+## [fit] __cryptographic__ hashes
 
 ---
 
@@ -190,8 +252,8 @@ Bob is now pwned.
 ---
 
 # [fit] you can [design your own][designing]
-# [fit] non-crypto hash with a little math
-# [fit] crytographic hashes are harder
+# [fit] non-crypto hash with __a little math__
+# [fit] cryptographic hashes are harder
 
 ---
 
@@ -225,7 +287,7 @@ Bob is now pwned.
 * store the output *only*
 * repeat the transformation when checking the password to see if you get the same result
 
-An attacker who can run that transformation frequently & quickly is one who can "brute-force attack" your users' passwords.
+An attacker who can run that transformation frequently & quickly is one who can __brute-force attack__ your users' passwords.
 
 ---
 
@@ -246,7 +308,7 @@ An attacker who can run that transformation frequently & quickly is one who can 
 - [argon2][argon2]
 - [PBKDF2][PBKDF2]
 
-^ bcrypt is the current industry standard; pbkdf2 is attackable with GPU-based algos.
+^ bcrypt is the current industry standard; based on Bernstein's blowfish cipher; pbkdf2 is attackable with GPU-based algos. scrypt & argon are new but probably fine to use.
 
 ---
 
@@ -288,7 +350,7 @@ An attacker who can run that transformation frequently & quickly is one who can 
 - very widely used (git shasums!)
 - designed by NSA in 1995, 1st attack in 2005
 - better attack in 2015
-- collision by Google in 2017
+- collision at > brute force speed by Google in 2017
 - __do not use__ as a cryptographic hash
 
 ---
@@ -300,7 +362,7 @@ An attacker who can run that transformation frequently & quickly is one who can 
 
 # Back to that classic example!
 
-Alice is using SHA-1 to sign her package tarballs. Carol is an employee of Google or maybe of a nation-state's spy agency, has a lot of computing power available, and really wants to pwn Bob. She cleverly crafts a tarball that has the same shasum as Alice's, and serves it to Bob.
+Alice is using SHA-1 to sign her package tarballs. Carol is an employee of Google or maybe of a nation-state's spy agency. Carol has a lot of computing power available, and really wants to pwn Bob. She cleverly crafts a tarball that has the same shasum as Alice's, and serves it to Bob.
 
 In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of her thumbnail instead of a fleet of cloud computers.
 
@@ -324,6 +386,7 @@ In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of he
 - comes in 224, 256, 384 or 512 bit variants
 - won a competition to choose next SHA standard
 - adopted as standard in 2015
+- chosen for its differences from SHA-2
 - no feasible attacks known
 - __do use__ freely
 
@@ -339,23 +402,43 @@ In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of he
 
 ---
 
-# [siphash][siphash]
+# hash __flooding__ attacks
 
-* optimized for speed with small input
-* used in hash table implementations in many languages
-* hash table implementations can have security implications!
+[Hash-flooding DOS attacks][flood] use collisions to mount denial-of-service attacks by attacking a language's underlying hash implementation.
 
-^ attacking a language's underlying hash implementation can be a way to attack the software; DDOS attacks are the concern here
+- send crafted data to an app, which stores it in a hash table
+- the keys are designed to cause collisions
+- all the data goes into one hash bucket
+- hash table performance collapses into merely a linked list
+- which is, as you know, Bob, a truly awful data structure
 
 ---
 
-## which one should npm adopt?
+# [fit] somebody did this to __perl__ in 2003
+# [fit] in 2011 to a lot of __other__ languages
+
+^ This produced ...
+
+---
+
+# [siphash][siphash]
+
+* designed to defend against hash flooding attacks
+* optimized for speed with small input
+* used in hash table implementations in many languages
+* use it for your own hash table
+
+---
+
+## which one should __npm__ adopt?
 
 * SHA-2, SHA-3, and BLAKE2 are all fine choices
 * SHA-2 is safer because of implementation availability
 * we are not size-sensitive about the output
 * we care more about picking an algo that will last
-* probably end up with SHA-512
+* SHA-512 is a solid, safe choice
+
+^ sha-1 is not something we'd pick if starting from scratch today. cost of migrating goes up every year we delay, so we should do it now.
 
 ---
 
@@ -366,20 +449,23 @@ In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of he
 * do use SHA-2 and newer hashes
 * use bcrypt to store passwords
 * don't invent unless you're an expert
-* in which case you're full of quibbles about this talk
+* in which case you should be giving this talk not me
 
 ---
 
-## [fit] Questions?
+## [fit] __Questions?__
 ## [fit] More-of-a-comment-reallys?
 
 ---
 
 ## all the links
 
-[Hash function wiki page][wiki] • [bcrypt][bcrypt] [scrypt][scrypt] • [PBKDF2][PBKDF2] • [argon2][argon2] • [MD5][md5] • [SHA-1][sha1] • [SHA-2][sha2] • [SHA-3][sha3] • [BLAKE2][blake2] • [seahash][seahash] • [xxhash][xxhash] • [siphash][siphash] • [designing your own non-cryptographic hash function][designing]
+[Hash function wiki page][wiki] • [bcrypt][bcrypt] [scrypt][scrypt] • [PBKDF2][PBKDF2] • [argon2][argon2] • [MD5][md5] • [SHA-1][sha1] • [SHA-2][sha2] • [SHA-3][sha3] • [BLAKE2][blake2] • [seahash][seahash] • [xxhash][xxhash] • [siphash][siphash] • [designing your own][designing] • [Hash-flooding][flood]
 
----
+Go! Try them! Learn more!
+
+love,
+@ceejbot
 
 [wiki]: https://en.wikipedia.org/wiki/Hash_function "wikipedia page on hashing functions"
 [murmurhash]: https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp "MurmurHash 3"
@@ -398,3 +484,4 @@ In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of he
 [xxhash]: https://cyan4973.github.io/xxHash/ "xxhash"
 [siphash]: https://131002.net/siphash/ "siphash"
 [designing]: http://ticki.github.io/blog/designing-a-good-non-cryptographic-hash-function/  "Designing a good non-cryptographic hash function"
+[flood]: http://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/ "Hash-flooding DOS reloaded"
