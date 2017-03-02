@@ -22,12 +22,14 @@
 ---
 
 ## [fit] why does this matter?
-## [fit] what should npm do about it?
+## [fit] what should __npm__ do about it?
+
+^ so let's talk about hashing!
 
 ---
 
 ## [fit] the term __hash__
-## [fit] like so many computer terms,
+## [fit] like so many computer terms
 ## [fit] is __metaphorical__
 
 ---
@@ -45,7 +47,7 @@
 
 ## __hash function__
 
-> Any function that can be used to map data of arbitrary size to data of fixed size.
+> _Any function that can be used to map data of arbitrary size to data of fixed size._
 
 -- [the wikipedia entry on hash functions][wiki]
 
@@ -97,7 +99,14 @@ The "something" can either be very simple, like the Knuth division hash, or very
 ## [fit] the hash value is (usually)
 ## [fit] a lot __smaller__ than the data!
 
-^ This is very handy: you have a representation of the data, related to it, that isn't a full copy of it.
+---
+
+# [fit] a hash value is a
+# [fit] __representation__ of your data
+# [fit] related to its content
+# [fit] that isn't a __full copy__
+
+^ This has a million household uses.
 
 ---
 
@@ -109,7 +118,7 @@ This is the data structure underlying associative arrays, caches, and a million 
 
 ---
 
-## Data integrity!
+## data integrity!
 
 Alice publishes a package on npm. Bob wants to know if the package he's downloading is the data Alice published, because he's worried about data corruption or tampering.
 
@@ -122,7 +131,7 @@ Alice creates a *checksum* of the data:
 0030be42121988078dca0ec982d04f72
 ```
 
-She gives the output to Bob, and he can compare with the md5 sum of his download to see if he has the data she meant to give him.
+She gives that output number to Bob, which he compares to the md5 sum of his download to see if he has the data she meant to give him.
 
 ---
 
@@ -130,8 +139,8 @@ She gives the output to Bob, and he can compare with the md5 sum of his download
 
 - output is *deterministic*
 - output is *uniformly distributed*, not clustered
-- usually: fast
 - output value has a fixed size
+- usually: fast
 - sometimes: similar inputs produce nearby outputs
 - sometimes: similar inputs produce distant outputs (avalanche effect)
 
@@ -219,11 +228,6 @@ Bob is now pwned.
 - usually a lot faster than cryptographic hashes
 - finding collisions might be feasible
 - ditto reconstructing the original
-
----
-
-# non-cryptographic hashes
-
 - use when speed matters
 - use when defense against malicious input doesn't matter
 
@@ -239,13 +243,14 @@ Bob is now pwned.
 
 ---
 
-# non-cryptographic hashes
+# hashing functions to know
 
 * [MurmurHash][murmurhash]
 * [CityHash][cityhash]
 * [HighwayHash][highwayhash]
 * [xxHash][xxhash]
 * [seahash][seahash]
+* [FNV][fnv], or Fowler-Noll-Vo
 
 ^ First three from Google, which employs a lot of CS peeps. I like xxhash for its speed.
 
@@ -415,7 +420,8 @@ In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of he
 ---
 
 # [fit] somebody did this to __perl__ in 2003
-# [fit] in 2011 to a lot of __other__ languages
+# [fit] in 2011 to __other__ languages
+# [fit] by attacking __MurmurHash__
 
 ^ This produced ...
 
@@ -442,6 +448,25 @@ In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of he
 
 ---
 
+# [fit] I heard __git__ uses SHA-1.
+# [fit] What's up with that?
+
+---
+
+# [fit] git __commit ids__ are SHA-1 hashes.
+# [fit] collisions do __bad things__ to your tree.
+# [fit] [Linus doesn't think it's a big deal.][git]
+
+---
+
+# [fit] [John Gilmore][gilmore] is eating __popcorn__
+
+> _I tried to fix this when git was young, when it would've been easy. Linus rejected the suggestion and didn't seem to understand the threat. He wired assumptions about SHA1 deeply into git. In the next few years, nasty people will teach him the threat model, with ungentle manipulations of his and many other peoples' source trees._
+
+--Gilmore
+
+---
+
 ## summary
 
 * stop using MD5
@@ -460,9 +485,11 @@ In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of he
 
 ## all the links
 
-[Hash function wiki page][wiki] • [bcrypt][bcrypt] [scrypt][scrypt] • [PBKDF2][PBKDF2] • [argon2][argon2] • [MD5][md5] • [SHA-1][sha1] • [SHA-2][sha2] • [SHA-3][sha3] • [BLAKE2][blake2] • [seahash][seahash] • [xxhash][xxhash] • [siphash][siphash] • [designing your own][designing] • [Hash-flooding][flood]
+Every link in this presentation, in one place:
 
-Go! Try them! Learn more!
+[Hash function wiki page][wiki] • [bcrypt][bcrypt] [scrypt][scrypt] • [PBKDF2][PBKDF2] • [argon2][argon2] • [MD5][md5] • [SHA-1][sha1] • [SHA-2][sha2] • [SHA-3][sha3] • [BLAKE2][blake2] • [seahash][seahash] • [xxhash][xxhash] • [siphash][siphash] • [designing your own][designing] • [Hash-flooding][flood] • [Torvald is a honey badger][linus] • [Gilmore eats popcorn][gilmore]
+
+Go! Learn more!
 
 love,
 @ceejbot
@@ -482,6 +509,9 @@ love,
 [blake2]: https://blake2.net "BLAKE2"
 [seahash]: https://github.com/ticki/tfs/tree/master/seahash "seahash"
 [xxhash]: https://cyan4973.github.io/xxHash/ "xxhash"
+[fnv]: https://en.wikipedia.org/wiki/Fowler–Noll–Vo_hash_function "Fowler-Noll-Vo hash"
 [siphash]: https://131002.net/siphash/ "siphash"
 [designing]: http://ticki.github.io/blog/designing-a-good-non-cryptographic-hash-function/  "Designing a good non-cryptographic hash function"
 [flood]: http://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/ "Hash-flooding DOS reloaded"
+[git]: https://www.theregister.co.uk/2017/02/26/git_fscked_by_sha1_collision_not_so_fast_says_linus_torvalds/ "Linus is like a honey badger"
+[gilmore]: http://www.metzdowd.com/pipermail/cryptography/2017-February/031623.html "popcorn"
