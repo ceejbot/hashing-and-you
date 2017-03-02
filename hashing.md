@@ -487,7 +487,8 @@ In ten years, Carol will be able to do this with a Raspberry Pi 7 the size of he
 
 Every link in this presentation, in one place:
 
-[Hash function wiki page][wiki] • [bcrypt][bcrypt] [scrypt][scrypt] • [PBKDF2][PBKDF2] • [argon2][argon2] • [MD5][md5] • [SHA-1][sha1] • [SHA-2][sha2] • [SHA-3][sha3] • [BLAKE2][blake2] • [seahash][seahash] • [xxhash][xxhash] • [siphash][siphash] • [designing your own][designing] • [Hash-flooding][flood] • [Torvald is a honey badger][linus] • [Gilmore eats popcorn][gilmore]
+[Hash function wiki page][wiki] • [bcrypt][bcrypt] [scrypt][scrypt] • [PBKDF2][PBKDF2] • [argon2][argon2] • [MD5][md5] • [SHA-1][sha1] • [SHA-2][sha2] • [SHA-3][sha3] • [BLAKE2][blake2] • [seahash][seahash] • [xxhash][xxhash] • [siphash][siphash] •
+[designing your own][designing] • [Hash-flooding][flood] • [git & sha-1][git] • [Gilmore eats popcorn][gilmore]
 
 Go! Learn more!
 
@@ -513,5 +514,5 @@ love,
 [siphash]: https://131002.net/siphash/ "siphash"
 [designing]: http://ticki.github.io/blog/designing-a-good-non-cryptographic-hash-function/  "Designing a good non-cryptographic hash function"
 [flood]: http://emboss.github.io/blog/2012/12/14/breaking-murmur-hash-flooding-dos-reloaded/ "Hash-flooding DOS reloaded"
-[git]: https://www.theregister.co.uk/2017/02/26/git_fscked_by_sha1_collision_not_so_fast_says_linus_torvalds/ "Linus is like a honey badger"
 [gilmore]: http://www.metzdowd.com/pipermail/cryptography/2017-February/031623.html "popcorn"
+[git]: https://www.theregister.co.uk/2017/02/26/git_fscked_by_sha1_collision_not_so_fast_says_linus_torvalds/ "Linus is like a honey badger"
